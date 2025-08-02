@@ -1,0 +1,207 @@
+html {
+    scroll-behavior: smooth;
+}
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #0c1024; /* Dark blue background */
+    color: #e0e0e0;
+    overflow-x: hidden;
+}
+
+/* Animated gradient background effect */
+.background-glow {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    overflow: hidden;
+}
+
+.background-glow::before {
+    content: '';
+    position: absolute;
+    width: 600px;
+    height: 600px;
+    background-image: radial-gradient(circle, rgba(45, 55, 255, 0.4) 0%, rgba(45, 55, 255, 0) 60%);
+    border-radius: 50%;
+    top: 50%;
+    left: 50%;
+    animation: glow-animate 15s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes glow-animate {
+    0%, 100% { transform: translate(-50%, -50%) scale(1); }
+    50% { transform: translate(-30%, -60%) scale(1.4); }
+}
+
+/* Glassmorphism effect for containers */
+.glass-container {
+    background: rgba(16, 20, 42, 0.6);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Gradient button style */
+.btn-gradient {
+    background-image: linear-gradient(to right, #3b82f6, #8b5cf6);
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px 0 rgba(70, 110, 237, 0.3);
+}
+.btn-gradient:hover {
+    background-position: right center;
+    box-shadow: 0 6px 20px 0 rgba(70, 110, 237, 0.5);
+}
+
+/* Form input focus style */
+.form-input:focus {
+    box-shadow: 0 0 0 2px #0c1024, 0 0 0 4px #3b82f6;
+}
+
+/* Transition for step visibility */
+.form-step {
+    transition: opacity 0.4s ease-in-out, transform 0.4s ease-in-out;
+    min-height: 420px; /* Adjusted for new content */
+}
+
+.form-step.hidden {
+    opacity: 0;
+    transform: translateY(20px);
+    position: absolute;
+    pointer-events: none;
+}
+
+/* Progress bar styling */
+.progress-bar-fill {
+    transition: width 0.5s ease-in-out;
+    background-image: linear-gradient(to right, #3b82f6, #8b5cf6);
+}
+
+/* Crypto Ticker Styling */
+.crypto-ticker {
+    width: 100%;
+    background-color: rgba(0,0,0,0.2);
+    padding: 0.5rem 0;
+    overflow: hidden;
+    white-space: nowrap;
+}
+.ticker-track {
+    display: inline-block;
+    animation: scroll-ticker 40s linear infinite;
+}
+.ticker-item {
+    display: inline-block;
+    margin: 0 1.5rem;
+    font-size: 0.9rem;
+}
+@keyframes scroll-ticker {
+    0% { transform: translateX(0%); }
+    100% { transform: translateX(-100%); }
+}
+
+/* FAQ Section Styling */
+.faq-item summary {
+    cursor: pointer;
+    outline: none;
+}
+.faq-item summary::-webkit-details-marker {
+    display: none;
+}
+.faq-item[open] summary {
+    color: #8b5cf6;
+}
+
+/* Tooltip for Fast Delivery */
+.tooltip {
+  position: relative;
+  display: inline-block;
+}
+.tooltip .tooltip-text {
+  visibility: hidden;
+  width: 220px;
+  background-color: #1f2937;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 8px;
+  position: absolute;
+  z-index: 1;
+  bottom: 125%;
+  left: 50%;
+  margin-left: -110px;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.tooltip:hover .tooltip-text {
+  visibility: visible;
+  opacity: 1;
+}
+
+/* Auth Modal Styling */
+.modal-overlay {
+    transition: opacity 0.3s ease-in-out;
+}
+.modal-container {
+    transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+}
+
+/* Order Tracking Timeline */
+.tracking-details {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.5s ease-in-out, margin-top 0.5s ease-in-out;
+}
+.order-item.open .tracking-details {
+    max-height: 500px; 
+    margin-top: 1rem;
+}
+.timeline {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+.timeline-step {
+    text-align: center;
+    position: relative;
+    width: 20%;
+}
+.timeline-step .timeline-icon {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background-color: #4b5563; /* gray-600 */
+    border: 2px solid #6b7280; /* gray-500 */
+    margin: 0 auto 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 12px;
+}
+.timeline-step:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    top: 11px;
+    left: 50%;
+    width: 100%;
+    height: 2px;
+    background-color: #4b5563; /* gray-600 */
+    z-index: -1;
+}
+.timeline-step.completed .timeline-icon {
+    background-color: #22c55e; /* green-500 */
+    border-color: #16a34a; /* green-600 */
+}
+.timeline-step.completed:not(:last-child)::after {
+    background-color: #22c55e; /* green-500 */
+}
+.timeline-step.active .timeline-icon {
+    background-color: #3b82f6; /* blue-500 */
+    border-color: #2563eb; /* blue-600 */
+}
+.timeline-step .timeline-title {
+    font-size: 12px;
+    font-weight: 500;
+}

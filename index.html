@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FiatRefill - Purchase Products with Crypto</title>
+    
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Linking to my custom CSS file -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="flex flex-col items-center min-h-screen">
+
+    <div class="background-glow"></div>
+
+    <!-- Header & Navigation -->
+    <header class="w-full max-w-7xl mx-auto z-20 sticky top-0 bg-opacity-80 backdrop-blur-md bg-[#0c1024]">
+        <nav class="w-full flex justify-between items-center p-4">
+            <a href="#" id="logo-btn" class="text-3xl font-extrabold text-white">Fiat<span class="text-blue-500">Refill</span></a>
+            <div class="hidden md:flex items-center space-x-8">
+                <a href="#blog-section" class="text-gray-300 hover:text-white transition-colors">Blog</a>
+                <a href="#faq" class="text-gray-300 hover:text-white transition-colors">FAQ</a>
+                <a href="#" id="order-history-btn" class="text-gray-300 hover:text-white transition-colors">Order History</a>
+                <a href="#" id="account-btn" class="bg-blue-600 text-white font-semibold py-2 px-5 rounded-lg hover:bg-blue-700 transition-colors">Account</a>
+                <a href="#" id="logout-btn" class="hidden bg-red-600 text-white font-semibold py-2 px-5 rounded-lg hover:bg-red-700 transition-colors">Logout</a>
+            </div>
+            <div class="md:hidden">
+                <svg class="w-8 h-8 text-white cursor-pointer" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+            </div>
+        </nav>
+        <!-- Live Crypto Price Ticker -->
+        <div id="crypto-ticker-container" class="crypto-ticker">
+            <!-- Ticker items will be injected here by JS -->
+        </div>
+    </header>
+
+    <div id="main-content">
+        <!-- Main Content Area -->
+        <div class="w-full max-w-2xl mx-auto flex-grow flex flex-col justify-center z-10 mt-10 px-4">
+            <!-- Header Section -->
+            <header class="text-center mb-10">
+                <h1 class="text-5xl md:text-6xl font-extrabold text-white leading-tight">Shop Anything,</h1>
+                <h1 class="text-5xl md:text-6xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500 leading-tight">Pay with Crypto</h1>
+                <p class="mt-4 text-lg md:text-xl text-gray-400 max-w-xl mx-auto">India's first platform to buy any product from any online store using your cryptocurrency.</p>
+            </header>
+
+            <!-- Main Form Container -->
+            <main id="multiStepForm" class="glass-container p-6 sm:p-8 rounded-2xl w-full">
+                
+                <!-- Progress Bar -->
+                <div id="form-progress-bar" class="mb-8">
+                    <div class="flex justify-between mb-2 text-sm font-medium text-gray-400">
+                        <span id="step-name-1" class="font-bold text-blue-400">1. Product</span>
+                        <span id="step-name-2">2. Delivery</span>
+                        <span id="step-name-3">3. Contact</span>
+                        <span id="step-name-4">4. Confirm</span>
+                    </div>
+                    <div class="w-full bg-gray-700/50 rounded-full h-2">
+                        <div id="progressBar" class="h-2 rounded-full progress-bar-fill" style="width: 25%;"></div>
+                    </div>
+                </div>
+
+                <form id="orderForm" class="relative">
+                    <!-- Product Request -->
+                    <div id="step-1" class="form-step">
+                        <h2 class="text-2xl font-semibold mb-4 text-white">Enter Product Details</h2>
+                        <div class="space-y-4">
+                             <div>
+                                <label for="productLink" class="block text-sm font-medium text-gray-300 mb-1">Product Link</label>
+                                <input type="url" id="productLink" name="productLink" class="form-input w-full px-4 py-3 bg-gray-900/70 border border-gray-700 text-white rounded-lg focus:outline-none transition-all" placeholder="https://www.example.com/product-page" required>
+                            </div>
+                            <div>
+                                <label for="productPrice" class="block text-sm font-medium text-gray-300 mb-1">Product Price (INR)</label>
+                                <input type="number" id="productPrice" name="productPrice" class="form-input w-full px-4 py-3 bg-gray-900/70 border border-gray-700 text-white rounded-lg focus:outline-none transition-all" placeholder="e.g., 4999" required>
+                            </div>
+                        </div>
+
+                        <div id="cost-estimator" class="mt-6 p-4 bg-gray-900/50 rounded-lg hidden">
+                            <h3 class="font-semibold text-white">Estimated Cost</h3>
+                            <p class="text-xs text-gray-400 mb-2">Final amount will be sent via email. This is an estimate only.</p>
+                            <div id="crypto-estimates" class="space-y-1 text-sm">
+                                <!-- Estimates will be injected here -->
+                            </div>
+                        </div>
+
+                        <div class="mt-8 text-right">
+                            <button type="button" id="next-to-2" class="btn-gradient text-white font-bold py-3 px-8 rounded-lg">Next</button>
+                        </div>
+                    </div>
+
+                    <!-- Delivery Details -->
+                    <div id="step-2" class="form-step hidden">
+                        <h2 class="text-2xl font-semibold mb-4 text-white">Shipping Information</h2>
+                        <p class="text-gray-400 mb-6">Where should we send your product?</p>
+                        <div class="grid grid-cols-1 gap-4">
+                            <input type="text" id="address" name="address" class="form-input w-full px-4 py-3 bg-gray-900/70 border border-gray-700 text-white rounded-lg focus:outline-none transition-all" placeholder="Full Address" required>
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                                <input type="text" id="city" name="city" class="form-input w-full px-4 py-3 bg-gray-900/70 border border-gray-700 text-white rounded-lg focus:outline-none transition-all" placeholder="City" required>
+                                <input type="text" id="state" name="state" class="form-input w-full px-4 py-3 bg-gray-900/70 border border-gray-700 text-white rounded-lg focus:outline-none transition-all" placeholder="State" required>
+                                <input type="text" id="pincode" name="pincode" pattern="[0-9]{6}" class="form-input w-full px-4 py-3 bg-gray-900/70 border border-gray-700 text-white rounded-lg focus:outline-none transition-all" placeholder="Pincode" required>
+                            </div>
+                        </div>
+                        <div class="mt-8 flex justify-between">
+                            <button type="button" id="prev-to-1" class="bg-gray-700 text-white font-semibold py-3 px-6 rounded-lg hover:bg-gray-600 transition-colors">Previous</button>
+                            <button type="button" id="next-to-3" class="btn-gradient text-white font-bold py-3 px-8 rounded-lg">Next</button>
+                        </div>
+                    </div>
+
+                    <!-- Contact Details -->
+                    <div id="step-3" class="form-step hidden">
+                        <h2 class="text-2xl font-semibold mb-4 text-white">Your Contact Details</h2>
+                         <p class="text-gray-400 mb-6">For shipping updates. Your privacy is important to us.</p>
+                        <div class="grid grid-cols-1 gap-4">
+                            <input type="text" id="fullName" name="fullName" class="form-input w-full px-4 py-3 bg-gray-900/70 border border-gray-700 text-white rounded-lg focus:outline-none transition-all" placeholder="Full Name" required>
+                            <input type="email" id="email" name="email" class="form-input w-full px-4 py-3 bg-gray-900/70 border border-gray-700 text-white rounded-lg focus:outline-none transition-all" placeholder="Email Address" required>
+                            <input type="tel" id="phone" name="phone" class="form-input w-full px-4 py-3 bg-gray-900/70 border border-gray-700 text-white rounded-lg focus:outline-none transition-all" placeholder="Phone Number" required>
+                        </div>
+                        <div class="mt-8 flex justify-between">
+                            <button type="button" id="prev-to-2" class="bg-gray-700 text-white font-semibold py-3 px-6 rounded-lg hover:bg-gray-600 transition-colors">Previous</button>
+                            <button type="button" id="next-to-4" class="btn-gradient text-white font-bold py-3 px-8 rounded-lg">Review Order</button>
+                        </div>
+                    </div>
+
+                    <!-- Confirmation -->
+                    <div id="step-4" class="form-step hidden">
+                        <h2 class="text-2xl font-semibold mb-4 text-white">Confirm Your Order</h2>
+                        <p class="text-gray-400 mb-6">Your product payment invoice will be sent to the email provided. You will receive order confirmation details upon payment.</p>
+                        <div class="space-y-3 text-gray-300 bg-gray-900/50 p-4 rounded-lg">
+                            <p><strong>Product Link:</strong> <span id="summary-link" class="block text-sm text-blue-400 break-all"></span></p>
+                            <p><strong>Shipping Address:</strong> <span id="summary-address" class="block text-sm"></span></p>
+                            <p><strong>Contact:</strong> <span id="summary-contact" class="block text-sm"></span></p>
+                        </div>
+                        <div class="mt-6">
+                            <label for="fast-delivery" class="flex items-center cursor-pointer">
+                                <input type="checkbox" id="fast-delivery" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
+                                <span class="ml-3 text-white">Opt for Fast Delivery</span>
+                                <span id="fast-delivery-fee" class="ml-2 text-green-400 font-medium hidden">(+$2.00)</span>
+                                <div class="tooltip ml-2">
+                                    <svg class="w-5 h-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
+                                    <span class="tooltip-text">Get order confirmation within 2 Hrs with the fastest delivery option available.</span>
+                                </div>
+                            </label>
+                        </div>
+                        <div class="mt-8 flex justify-between">
+                            <button type="button" id="prev-to-3" class="bg-gray-700 text-white font-semibold py-3 px-6 rounded-lg hover:bg-gray-600 transition-colors">Back</button>
+                            <button type="submit" class="bg-green-600 text-white font-bold py-3 px-8 rounded-lg hover:bg-green-700 transition-colors">Submit Request</button>
+                        </div>
+                    </div>
+                </form>
+                
+                <!-- Success Message -->
+                <div id="successMessage" class="hidden text-center py-10 min-h-[380px] flex flex-col justify-center">
+                     <svg class="mx-auto h-16 w-16 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <h2 class="text-3xl font-semibold mt-4 text-white">Request Submitted!</h2>
+                    <p class="text-gray-400 mt-2">We've received your request and will contact you shortly with a payment link and order confirmation.</p>
+                    <button type="button" id="startNewRequest" class="mt-8 btn-gradient text-white font-bold py-3 px-8 rounded-lg self-center">Place Another Request</button>
+                </div>
+
+            </main>
+        </div>
+        
+        <!-- Blog Section -->
+        <section id="blog-section" class="w-full max-w-4xl mx-auto z-10 mt-24 p-4">
+            <div class="text-center">
+                <h2 class="text-4xl font-extrabold text-white mb-4">What is FiatRefill?</h2>
+                <p class="text-lg text-gray-400 max-w-3xl mx-auto">
+                    FiatRefill is your bridge to the world of Indian e-commerce, powered by cryptocurrency. We enable you to shop from any online store like Amazon India or Flipkart, even if they don't accept crypto directly.
+                </p>
+            </div>
+
+            <div class="mt-12">
+                <h3 class="text-2xl font-bold text-center text-white mb-8">How It Works</h3>
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-8 text-center">
+                    <!-- Part 1 -->
+                    <div class="flex flex-col items-center">
+                        <div class="flex items-center justify-center h-16 w-16 rounded-full bg-blue-500/20 mb-4">
+                            <svg class="w-8 h-8 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
+                        </div>
+                        <h4 class="font-semibold text-white">1. Send Product Link</h4>
+                        <p class="text-gray-400 text-sm">You find a product on any Indian e-commerce site and send us the link.</p>
+                    </div>
+                    <!-- Part 2 -->
+                    <div class="flex flex-col items-center">
+                        <div class="flex items-center justify-center h-16 w-16 rounded-full bg-blue-500/20 mb-4">
+                            <svg class="w-8 h-8 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                        </div>
+                        <h4 class="font-semibold text-white">2. Share Your Info</h4>
+                        <p class="text-gray-400 text-sm">Provide your shipping address and contact details for delivery purposes.</p>
+                    </div>
+                    <!-- Part 3 -->
+                    <div class="flex flex-col items-center">
+                        <div class="flex items-center justify-center h-16 w-16 rounded-full bg-blue-500/20 mb-4">
+                            <svg class="w-8 h-8 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                        </div>
+                        <h4 class="font-semibold text-white">3. Pay in Crypto</h4>
+                        <p class="text-gray-400 text-sm">We send you a payment link. You pay the total amount using your preferred cryptocurrency.</p>
+                    </div>
+                    <!-- Part 4 -->
+                    <div class="flex flex-col items-center">
+                        <div class="flex items-center justify-center h-16 w-16 rounded-full bg-blue-500/20 mb-4">
+                             <svg class="w-8 h-8 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        </div>
+                        <h4 class="font-semibold text-white">4. We Deliver</h4>
+                        <p class="text-gray-400 text-sm">We purchase the product with fiat currency and have it delivered to your doorstep.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-16 text-center">
+                <h3 class="text-2xl font-bold text-white mb-8">Why Choose FiatRefill?</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                    <div class="glass-container p-6 rounded-lg">
+                        <h4 class="font-semibold text-white">Shop Anywhere</h4>
+                        <p class="text-gray-400 text-sm mt-2">Access any online store in India, regardless of their payment policies.</p>
+                    </div>
+                    <div class="glass-container p-6 rounded-lg">
+                        <h4 class="font-semibold text-white">Secure Crypto Payments</h4>
+                        <p class="text-gray-400 text-sm mt-2">Pay with your favorite cryptocurrency through a secure and reliable process.</p>
+                    </div>
+                    <div class="glass-container p-6 rounded-lg">
+                        <h4 class="font-semibold text-white">We Handle Fiat</h4>
+                        <p class="text-gray-400 text-sm mt-2">No need to convert your crypto. We manage all fiat currency transactions for you.</p>
+                    </div>
+                    <div class="glass-container p-6 rounded-lg">
+                        <h4 class="font-semibold text-white">Fast & Reliable</h4>
+                        <p class="text-gray-400 text-sm mt-2">Enjoy fast order processing and reliable delivery to your address.</p>
+                    </div>
+                </div>
+                <div class="mt-12">
+                    <a href="#faq" class="btn-gradient text-white font-bold py-3 px-8 rounded-lg inline-block">Learn More</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- FAQ Section -->
+        <section id="faq" class="w-full max-w-2xl mx-auto z-10 mt-20 p-4">
+            <h2 class="text-4xl font-bold text-center text-white mb-8">Frequently Asked Questions</h2>
+            <div class="space-y-4">
+                <div class="faq-item glass-container rounded-lg p-5">
+                    <details>
+                        <summary class="font-semibold text-lg text-white flex justify-between items-center">
+                            How does this service work?
+                            <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </summary>
+                        <p class="text-gray-400 mt-3">It's simple! You paste the link of the product you want, provide your delivery details, and we send you a crypto payment link. Once you pay, we order the product to your address. You get to use your crypto, and we handle the fiat conversion and purchase.</p>
+                    </details>
+                </div>
+                <div class="faq-item glass-container rounded-lg p-5">
+                    <details>
+                        <summary class="font-semibold text-lg text-white flex justify-between items-center">
+                            Which cryptocurrencies do you accept?
+                            <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </summary>
+                        <p class="text-gray-400 mt-3">We accept a wide range of cryptocurrencies including Bitcoin (BTC), Ethereum (ETH), Tether (USDT), and other major altcoins. The final payment link will show all available options.</p>
+                    </details>
+                </div>
+                <div class="faq-item glass-container rounded-lg p-5">
+                    <details>
+                        <summary class="font-semibold text-lg text-white flex justify-between items-center">
+                            Are there any hidden fees?
+                            <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </summary>
+                        <p class="text-gray-400 mt-3">We charge a small service fee on top of the product price and any applicable crypto network fees. The complete breakdown will be provided with your payment link, ensuring full transparency before you pay.</p>
+                    </details>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Order History Section -->
+    <section id="order-history-section" class="w-full max-w-4xl mx-auto z-10 mt-10 p-4 hidden">
+        <h2 class="text-4xl font-extrabold text-white mb-8 text-center">Your Order History</h2>
+        <div class="glass-container rounded-lg p-5">
+            <div class="space-y-4" id="order-list">
+                <!-- Sample Order 1 -->
+                <div class="order-item border-b border-gray-700 pb-4 cursor-pointer">
+                    <div class="flex justify-between items-center">
+                        <p class="font-semibold text-white">Order #FR1024</p>
+                        <span class="text-sm text-green-400 bg-green-500/20 px-2 py-1 rounded-full">Completed</span>
+                    </div>
+                    <p class="text-sm text-gray-400 mt-1">Date: 25 Jul 2025</p>
+                    <p class="mt-2 text-gray-300">Product: Wireless Bluetooth Earbuds</p>
+                    <div class="tracking-details">
+                        <h4 class="font-semibold text-white mt-4 mb-2">Order Progress</h4>
+                        <div class="timeline">
+                            <div class="timeline-step completed"><div class="timeline-icon">&#10003;</div><div class="timeline-title">Order Placed</div></div>
+                            <div class="timeline-step completed"><div class="timeline-icon">&#10003;</div><div class="timeline-title">Invoice Sent</div></div>
+                            <div class="timeline-step completed"><div class="timeline-icon">&#10003;</div><div class="timeline-title">Payment Received</div></div>
+                            <div class="timeline-step completed"><div class="timeline-icon">&#10003;</div><div class="timeline-title">Shipped</div></div>
+                            <div class="timeline-step completed"><div class="timeline-icon">&#10003;</div><div class="timeline-title">Delivered</div></div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Sample Order 2 -->
+                <div class="order-item border-b border-gray-700 pb-4 cursor-pointer">
+                    <div class="flex justify-between items-center">
+                        <p class="font-semibold text-white">Order #FR1023</p>
+                        <span class="text-sm text-yellow-400 bg-yellow-500/20 px-2 py-1 rounded-full">Processing</span>
+                    </div>
+                    <p class="text-sm text-gray-400 mt-1">Date: 28 Jul 2025</p>
+                    <p class="mt-2 text-gray-300">Product: Mechanical Keyboard</p>
+                    <div class="tracking-details">
+                        <h4 class="font-semibold text-white mt-4 mb-2">Order Progress</h4>
+                        <div class="timeline">
+                            <div class="timeline-step completed"><div class="timeline-icon">&#10003;</div><div class="timeline-title">Order Placed</div></div>
+                            <div class="timeline-step completed"><div class="timeline-icon">&#10003;</div><div class="timeline-title">Invoice Sent</div></div>
+                            <div class="timeline-step active"><div class="timeline-icon">!</div><div class="timeline-title">Payment Received</div></div>
+                            <div class="timeline-step"><div class="timeline-icon"></div><div class="timeline-title">Shipped</div></div>
+                            <div class="timeline-step"><div class="timeline-icon"></div><div class="timeline-title">Delivered</div></div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Empty State -->
+                <div id="empty-history" class="text-center py-8">
+                    <p class="text-gray-400">You have no past orders.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="w-full max-w-6xl mx-auto text-center p-4 mt-16 z-10">
+        <div class="flex justify-center space-x-6 mb-4">
+            <!-- Twitter (X) -->
+            <a href="#" class="text-gray-400 hover:text-white transition-colors"><svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path></svg></a>
+            <!-- Telegram -->
+            <a href="#" class="text-gray-400 hover:text-white transition-colors"><svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.17.9-.502 1.2-1.023 1.226-.874.04-1.422-.43-2.225-1.142-.533-.474-1.04-1.02-1.606-1.504-1.042-.9-1.223-1.226-1.023-1.36.14-.14.28-.28.42-.42.28-.28.56-.56.84-.84.42-.42.84-.84 1.26-1.26.56-.56.28-.84-.28-1.12-.42-.14-.84-.28-1.26-.42-1.4-.56-2.52-.84-3.64-1.12C4.1 9.864 4 9.584 4.002 9.1c0-.42.32-.676.923-.842 2.418-.62 4.085-1.216 5.207-1.624.9-.3 1.8-.6 2.7-.9.12-.04.24-.08.36-.12z"></path></svg></a>
+            <!-- Discord -->
+            <a href="#" class="text-gray-400 hover:text-white transition-colors"><svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M19.54 0c1.356 0 2.46 1.104 2.46 2.472v19.056c0 1.368-1.104 2.472-2.46 2.472h-15.12c-1.356 0-2.46-1.104-2.46-2.472v-19.056c0-1.368 1.104-2.472 2.46-2.472h15.12zm-7.584 12.336c-1.224 0-2.208 1.02-2.208 2.28s.984 2.28 2.208 2.28c1.224 0 2.208-1.02 2.208-2.28s-.984-2.28-2.208-2.28zm-5.28-1.14c-1.224 0-2.208 1.02-2.208 2.28s.984 2.28 2.208 2.28c1.224 0 2.208-1.02 2.208-2.28s-.984-2.28-2.208-2.28zm10.56 0c-1.224 0-2.208 1.02-2.208 2.28s.984 2.28 2.208 2.28c1.224 0 2.208-1.02 2.208-2.28s-.984-2.28-2.208-2.28z"></path></svg></a>
+        </div>
+        <p class="text-sm text-gray-500">&copy; 2024 FiatRefill. All Rights Reserved.</p>
+    </footer>
+
+    <!-- Auth Modal -->
+    <div id="auth-modal" class="fixed inset-0 z-30 flex items-center justify-center p-4 bg-black bg-opacity-70 modal-overlay hidden opacity-0">
+        <div class="glass-container rounded-2xl w-full max-w-md p-8 modal-container transform scale-95 opacity-0">
+            <div class="flex justify-between items-center">
+                <h2 id="modal-title" class="text-3xl font-bold text-white">Login</h2>
+                <button id="close-modal-btn" class="text-gray-400 hover:text-white text-3xl leading-none">&times;</button>
+            </div>
+            <p id="modal-subtitle" class="text-gray-400 mt-2">Welcome back! Please enter your details.</p>
+            
+            <div class="space-y-4 mt-8">
+                <button class="w-full flex items-center justify-center py-3 px-4 bg-white text-gray-800 rounded-lg font-semibold hover:bg-gray-200 transition-colors">
+                    <svg class="w-6 h-6 mr-3" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z"></path><path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z"></path><path fill="#4CAF50" d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z"></path><path fill="#1976D2" d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.574l6.19,5.238C41.38,36.123,44,30.608,44,24C44,22.659,43.862,21.35,43.611,20.083z"></path></svg>
+                    Continue with Google
+                </button>
+            </div>
+
+            <div class="my-6 flex items-center">
+                <hr class="flex-grow border-t border-gray-600">
+                <span class="mx-4 text-gray-400">OR</span>
+                <hr class="flex-grow border-t border-gray-600">
+            </div>
+
+            <form id="auth-form" class="space-y-4">
+                <input type="email" placeholder="Email Address" class="form-input w-full px-4 py-3 bg-gray-900/70 border border-gray-700 text-white rounded-lg focus:outline-none transition-all" required>
+                <input type="password" placeholder="Password" class="form-input w-full px-4 py-3 bg-gray-900/70 border border-gray-700 text-white rounded-lg focus:outline-none transition-all" required>
+                <button type="submit" id="auth-submit-btn" class="w-full btn-gradient text-white font-bold py-3 rounded-lg">Continue</button>
+            </form>
+
+            <p class="text-center text-sm text-gray-400 mt-6">
+                <span id="auth-switch-text">Don't have an account?</span>
+                <a href="#" id="auth-switch-link" class="font-semibold text-blue-400 hover:underline">Sign Up</a>
+            </p>
+        </div>
+    </div>
+
+    <!-- Link to custom JS file -->
+    <!--This is FiatRefill founded by Pushpam nd Ayush-->>
+    <script src="script.js"></script>
+</body>
+</html>
